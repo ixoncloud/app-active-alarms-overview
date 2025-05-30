@@ -1,7 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { DateTime } from 'luxon';
-  import type { ComponentContext, MyUser, ResourceDataClient } from '@ixon-cdk/types';
+  import type {
+    ComponentContext,
+    MyUser,
+    ResourceDataClient,
+  } from '@ixon-cdk/types';
   import { AlarmsManager } from './services/alarms-manager';
   import type { Alarm, Input } from './types';
 
@@ -29,7 +33,11 @@
           const activeSince = activeOcc?.occurredOn
             ? formatDateTime(activeOcc.occurredOn)
             : undefined;
-          const alarmData = [alarm.agentOrAsset.name, alarm.name, alarm.severity];
+          const alarmData = [
+            alarm.agentOrAsset.name,
+            alarm.name,
+            alarm.severity,
+          ];
           if (activeSince) {
             alarmData.push(activeSince);
           }
@@ -55,13 +63,10 @@
       undefined,
       { source: 'global' },
     );
-    client.query(
-      { selector: 'MyUser', fields: ['publicId'] },
-      ([result]) => {
-        myUser = result.data;
-        getCurrentActiveAlarms();
-      },
-    );
+    client.query({ selector: 'MyUser', fields: ['publicId'] }, ([result]) => {
+      myUser = result.data;
+      getCurrentActiveAlarms();
+    });
     if (!!context.inputs.refreshRate) {
       toggleAutoRefresh();
     }
@@ -118,7 +123,7 @@
   }
 
   async function getCurrentActiveAlarms(): Promise<void> {
-    if(myUser) {
+    if (myUser) {
       loading = true;
       alarms = (await alarmsManager.getActiveAlarms(myUser)).sort((a, b) => {
         const delta = _getSortingWeight(b) - _getSortingWeight(a);
@@ -298,8 +303,8 @@
     left: 0;
     width: 100%;
     height: 42px;
-    background: var(--basic);
-    box-shadow: 0 2px 2px 0 var(--card-border-color);
+    background: var(--card-bg);
+    box-shadow: 0 2px 2px 0 rgb(0 0 0 / 12%);
   }
 
   table.base-table {
@@ -318,7 +323,7 @@
         th {
           position: sticky;
           white-space: nowrap;
-          background: var(--basic);
+          background: var(--card-bg);
           top: 0;
           overflow: hidden;
           text-overflow: ellipsis;
